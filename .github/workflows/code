@@ -1,0 +1,29 @@
+tool = Tool.from_retrieval(retrieval=retrieval)
+
+model = GenerativeModel("gemini-2.5-flash", tools=[tool])
+
+error = os.environ.get("ERROR_LOG", "") [:8000]
+
+print("ERROR length:", len(error))
+
+prompt = f"""
+You are a CI debugging expert
+
+IMPORTANT:
+- You MUST use retrived knowledge from RAG corpus
+- Thr corpus contains CI workflow, parameters, and templates
+- Mention what you retrieved and how it helped
+
+ERROR:
+{error}
+"""
+
+print("Running analysis...")
+
+res = model.generate_content(prompt)
+
+print("\n REPOSNSE:\n", res.txt)
+
+open("analysis.txt", "w").write(res.txt)
+PY
+python analyze.py
